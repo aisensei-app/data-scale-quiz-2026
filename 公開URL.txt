@@ -1,0 +1,5 @@
+公開URL
+https://aisensei-app.github.io/data-scale-quiz-2026/
+
+GitHubリポジトリ
+https://github.com/aisensei-app/data-scale-quiz-2026
