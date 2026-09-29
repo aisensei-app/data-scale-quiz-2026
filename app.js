@@ -41,23 +41,11 @@
   function top() {
     clearInterval(timer);
     window.scrollTo(0, 0);
-    root.innerHTML = `<section class="card top-card"><div class="pin-mark" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></div><p class="eyebrow">DATA SCALE QUIZ</p><h1>データを見て、<br>尺度を見きわめよう。</h1><p class="lead">変数名だけでなく、データの定義と実際の値を確認して答えます。</p><div class="scale-list" aria-label="4つの尺度">${scaleNames.map((name) => `<button type="button" class="scale-help" data-scale="${name}" aria-pressed="false"><span>${name.replace('尺度', '')}</span><b aria-hidden="true">?</b><span class="sr-only">の説明を見る</span></button>`).join('')}</div><div class="scale-help-panel" id="scale-help-panel" aria-live="polite" hidden></div><button class="primary" data-action="start">クイズを始める</button><p class="rule">全12問 ・ 1問10秒 ・ 選択肢はA〜Dで固定</p></section>`;
-    root.querySelectorAll('.scale-help').forEach((button) => {
-      button.addEventListener('click', () => showScaleHelp(button));
-    });
-  }
-
-  function showScaleHelp(button) {
-    const scaleName = button.dataset.scale;
-    const help = scaleHelp[scaleName];
-    const panel = document.querySelector('#scale-help-panel');
-    document.querySelectorAll('.scale-help').forEach((item) => {
-      const selected = item === button;
-      item.classList.toggle('selected', selected);
-      item.setAttribute('aria-pressed', String(selected));
-    });
-    panel.innerHTML = `<strong>${escapeHtml(scaleName)}</strong><span>${escapeHtml(help.summary)}</span><small>${escapeHtml(help.example)}</small>`;
-    panel.hidden = false;
+    const scaleKeys = ['nominal', 'ordinal', 'interval', 'ratio'];
+    const helpInputs = scaleNames.map((name, i) => `<input class="sr-only scale-help-radio" type="radio" name="scale-help" id="scale-help-${scaleKeys[i]}">`).join('');
+    const helpLabels = scaleNames.map((name, i) => `<label class="scale-help-label" for="scale-help-${scaleKeys[i]}"><span>${name.replace('尺度', '')}</span><b aria-hidden="true">?</b><span class="sr-only">の説明を見る</span></label>`).join('');
+    const helpPanels = scaleNames.map((name, i) => `<div class="scale-help-panel ${scaleKeys[i]}-panel"><strong>${escapeHtml(name)}</strong><span>${escapeHtml(scaleHelp[name].summary)}</span><small>${escapeHtml(scaleHelp[name].example)}</small></div>`).join('');
+    root.innerHTML = `<section class="card top-card"><div class="pin-mark" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></div><p class="eyebrow">DATA SCALE QUIZ</p><h1>データを見て、<br>尺度を見きわめよう。</h1><p class="lead">変数名だけでなく、データの定義と実際の値を確認して答えます。</p><div class="scale-help-box">${helpInputs}<div class="scale-list" aria-label="4つの尺度">${helpLabels}</div><div class="scale-help-panels" aria-live="polite">${helpPanels}</div></div><button class="primary" data-action="start">クイズを始める</button><p class="rule">全12問 ・ 1問10秒 ・ 選択肢はA〜Dで固定</p></section>`;
   }
 
   function countdown() {
@@ -173,7 +161,6 @@
   root.addEventListener('click', (event) => {
     const button = event.target.closest('button');
     if (!button || !root.contains(button)) return;
-    if (button.classList.contains('scale-help')) return;
     if (button.dataset.action === 'start') {
       track('quiz_start', { question_count: scaleNames.length * questionsPerScale });
       countdown();
