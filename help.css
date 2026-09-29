@@ -36,7 +36,10 @@
   background: #d9f1f3;
 }
 
-.scale-help-radio:focus-visible ~ .scale-list .scale-help-label {
+#scale-help-nominal:focus-visible ~ .scale-list label[for="scale-help-nominal"],
+#scale-help-ordinal:focus-visible ~ .scale-list label[for="scale-help-ordinal"],
+#scale-help-interval:focus-visible ~ .scale-list label[for="scale-help-interval"],
+#scale-help-ratio:focus-visible ~ .scale-list label[for="scale-help-ratio"] {
   outline: 3px solid #f0a16f;
   outline-offset: 2px;
 }
